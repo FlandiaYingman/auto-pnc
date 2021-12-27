@@ -1,7 +1,7 @@
 package top.anagke
 
-import top.anagke.auto_ark.AutoArk
+import top.anagke.auto_pnc.AutoPnc
 
 fun main() {
-    AutoArk().routine()
+    AutoPnc().auto()
 }

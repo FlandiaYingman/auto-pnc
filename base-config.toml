@@ -1,6 +1,6 @@
-server = "OFFICIAL"
 cacheLocation = "cache.yaml"
-forceLogin = true
+username = "<username>"
+password = "<password>"
 
 [emulator]
 blueStacksHome = "C:/Program Files/BlueStacks_nxt"
@@ -8,13 +8,3 @@ blueStacksData = "C:/ProgramData/BlueStacks_nxt"
 instance = "Nougat32"
 adbHost = "127.0.0.1"
 adbPort = 0
-
-[riicConfig]
-autoAssigning = true
-autoAssignControlCenter = false
-
-[operateConfig]
-strategy = "WAIT"
-doFarmAnnihilation = true
-doFarmPlan = false
-doFarmDaily = true
