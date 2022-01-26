@@ -1,15 +1,8 @@
 package top.anagke.auto_pnc
 
 import mu.KotlinLogging
-import top.anagke.auto_android.AutoModule
-import top.anagke.auto_android.Device
-import top.anagke.auto_android.assert
-import top.anagke.auto_android.await
+import top.anagke.auto_android.*
 import top.anagke.auto_android.img.Tmpl
-import top.anagke.auto_android.nap
-import top.anagke.auto_android.sleep
-import top.anagke.auto_android.tapdListItem
-import top.anagke.auto_android.whileFind
 
 private val logger = KotlinLogging.logger {}
 
@@ -79,7 +72,7 @@ class FactoryModule(
         submitTask(Room.采掘矿场, 2..10) //随机的“……数据”
         submitTask(Room.物资车间, (1..2) + (9..9)) //“作战经验”或“基础检索指令”或“算法素材箱”
         submitTask(Room.礼品工房, 0..7) //蓝色礼物
-        submitTask(Room.数据封装中心, 6..6) //蓝色礼物
+        submitTask(Room.数据封装中心, listOf(5, 5, 5, 6)) //75% 技能枢核、25% 技能素材箱
     }
 
     private fun exitFactory() {
