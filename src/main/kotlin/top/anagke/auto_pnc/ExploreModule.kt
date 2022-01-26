@@ -1,16 +1,9 @@
 package top.anagke.auto_pnc
 
 import mu.KotlinLogging
-import top.anagke.auto_android.AutoModule
-import top.anagke.auto_android.Device
-import top.anagke.auto_android.assert
-import top.anagke.auto_android.await
+import top.anagke.auto_android.*
 import top.anagke.auto_android.img.Tmpl
-import top.anagke.auto_android.match
-import top.anagke.auto_android.nap
-import top.anagke.auto_android.sleep
 import top.anagke.auto_android.util.minutes
-import top.anagke.auto_android.whileNotMatch
 
 private val logger = KotlinLogging.logger {}
 
@@ -28,7 +21,13 @@ class ExploreModule(
 
         private val 可自动战斗: Tmpl by tmpl()
         private val 可自动战斗_禁用: Tmpl by tmpl()
+        private val 可自动战斗_算法采集: Tmpl by tmpl()
+        private val 可自动战斗_禁用_算法采集: Tmpl by tmpl()
         private val 自动战斗结果: Tmpl by tmpl()
+        private val 获得奖励: Tmpl by tmpl()
+
+        private val 算法采集区域2_已折叠 by tmpl()
+        private val 算法采集区域2_未折叠 by tmpl()
 
         @JvmStatic
         fun main(args: Array<String>) {
@@ -81,9 +80,16 @@ class ExploreModule(
     fun farm算法采集() = device.apply {
         logger.info { "探索：farm算法采集" }
         tapd(722, 224).sleep() //算法采集
-        assert(可自动战斗, 可自动战斗_禁用)
-        tap(76, 341).nap() //高级算法采集
-        if (match(可自动战斗)) {
+        assert(可自动战斗_算法采集, 可自动战斗_禁用_算法采集)
+        when (which(算法采集区域2_未折叠, 算法采集区域2_已折叠)) {
+            算法采集区域2_未折叠 -> {
+                tap(165, 470).nap()
+            }
+            算法采集区域2_已折叠 -> {
+                tap(175, 235).nap()
+            }
+        }
+        if (match(可自动战斗_算法采集)) {
             自动战斗(farmAll = true, epX = 1110)
         }
 
@@ -92,7 +98,7 @@ class ExploreModule(
     }
 
     private fun Device.自动战斗(farmAll: Boolean = false, epX: Int = 386) {
-        assert(可自动战斗)
+        assert(可自动战斗, 可自动战斗_算法采集)
         tap(epX, 492).nap()
         tap(858, 622).sleep() //自动战斗
         if (farmAll) {
@@ -101,7 +107,10 @@ class ExploreModule(
         tap(807, 519).sleep() //准备作战
         tap(1102, 648).sleep() //自动战斗
         await(自动战斗结果, timeout = 10.minutes)
-        tap(670, 495) //完成
+        tap(670, 495).sleep() //完成
+        whileMatch(获得奖励) {
+            tap(670, 495).sleep() //完成
+        }
     }
 
     fun quitExplore() = device.apply {
@@ -126,4 +135,8 @@ class ExploreModule(
         sleep()
     }
 
+}
+
+fun main() {
+    ExploreModule(AutoPncConfig.loadConfig(), Device()).farm算法采集()
 }
