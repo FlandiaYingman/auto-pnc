@@ -1,28 +1,15 @@
 package top.anagke.auto_pnc
 
-import com.charleskorn.kaml.Yaml
 import com.sksamuel.hoplite.ConfigLoader
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.encodeToString
 import mu.KotlinLogging
-import top.anagke.auto_android.AutoModule
-import top.anagke.auto_android.Device
-import top.anagke.auto_android.Emulator
-import top.anagke.auto_android.assert
-import top.anagke.auto_android.await
+import top.anagke.auto_android.*
 import top.anagke.auto_android.img.Img
 import top.anagke.auto_android.img.Tmpl
-import top.anagke.auto_android.matched
-import top.anagke.auto_android.sleep
 import top.anagke.auto_android.util.hours
 import java.nio.file.NoSuchFileException
 import java.nio.file.Path
 import kotlin.concurrent.thread
 import kotlin.io.path.exists
-import kotlin.io.path.notExists
-import kotlin.io.path.readText
-import kotlin.io.path.writeText
 import kotlin.reflect.KProperty
 
 private val logger = KotlinLogging.logger {}
@@ -51,8 +38,10 @@ class TmplDelegate(private val diff: Double) {
 
 // 主界面
 val 主界面: Tmpl by tmpl()
+
 // 主界面
 val 主界面_拖出: Tmpl by tmpl()
+
 // 可跳回主界面
 val 可跳出: Tmpl by tmpl()
 
@@ -74,8 +63,13 @@ fun Device.jumpBack() {
 
 class AutoPnc(
     config: AutoPncConfig = AutoPncConfig.loadConfig(),
-    device: Device = config.emulator.open(),
+    device: Device = findEmulator(config.emulators),
 ) : AutoCloseable {
+
+    init {
+
+    }
+
 
     private val initModule: AutoModule = LoginModule(config, device)
 
@@ -161,7 +155,7 @@ class AutoPnc(
 
 data class AutoPncConfig(
     val cacheLocation: Path,
-    val emulator: Emulator,
+    val emulators: List<Emulator>,
     val username: String,
     val password: String,
 ) {
@@ -186,26 +180,6 @@ data class AutoPncConfig(
         }
 
         private fun findExisting(paths: List<Path>) = paths.find { it.exists() }
-
-    }
-
-}
-
-@Serializable
-data class AutoPncModule(
-    var farmingPlan: Map<String, Int> = mapOf(),
-) {
-
-    companion object {
-
-        fun loadCache(cacheFile: Path): AutoPncModule {
-            if (cacheFile.notExists()) saveCache(cacheFile, AutoPncModule())
-            return Yaml.default.decodeFromString(cacheFile.readText())
-        }
-
-        fun saveCache(cacheFile: Path, cache: AutoPncModule) {
-            cacheFile.writeText(Yaml.default.encodeToString(cache))
-        }
 
     }
 
