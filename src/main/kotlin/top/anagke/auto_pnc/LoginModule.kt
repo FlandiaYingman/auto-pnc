@@ -1,20 +1,14 @@
 package top.anagke.auto_pnc
 
 import mu.KotlinLogging
-import top.anagke.auto_android.AndroidActivity
-import top.anagke.auto_android.AutoModule
-import top.anagke.auto_android.Device
-import top.anagke.auto_android.await
-import top.anagke.auto_android.findEdge
+import top.anagke.auto_android.*
 import top.anagke.auto_android.img.Tmpl
-import top.anagke.auto_android.nap
-import top.anagke.auto_android.whileNotMatch
 
 private val logger = KotlinLogging.logger {}
 
 class LoginModule(
     private val config: AutoPncConfig,
-    private val device: Device = config.emulator.open(),
+    private val device: Device = findEmulator(config.emulators),
 ) : AutoModule {
 
     companion object {

@@ -1,20 +1,14 @@
 package top.anagke.auto_pnc
 
 import mu.KotlinLogging
-import top.anagke.auto_android.AutoModule
-import top.anagke.auto_android.Device
-import top.anagke.auto_android.assert
+import top.anagke.auto_android.*
 import top.anagke.auto_android.img.Tmpl
-import top.anagke.auto_android.match
-import top.anagke.auto_android.nap
-import top.anagke.auto_android.sleep
-import top.anagke.auto_android.whileMatch
 
 private val logger = KotlinLogging.logger {}
 
 class MissionModule(
     private val config: AutoPncConfig,
-    private val device: Device = config.emulator.open(),
+    private val device: Device = findEmulator(config.emulators),
 ) : AutoModule {
 
     companion object {

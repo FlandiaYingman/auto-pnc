@@ -8,7 +8,7 @@ private val logger = KotlinLogging.logger {}
 
 class FactoryModule(
     private val config: AutoPncConfig,
-    private val device: Device = config.emulator.open(),
+    private val device: Device = findEmulator(config.emulators),
 ) : AutoModule {
 
     companion object {
