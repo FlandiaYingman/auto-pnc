@@ -2,7 +2,7 @@ cacheLocation = "cache.yaml"
 username = "<username>"
 password = "<password>"
 
-[emulator]
+[[emulator]]
 blueStacksHome = "C:/Program Files/BlueStacks_nxt"
 blueStacksData = "C:/ProgramData/BlueStacks_nxt"
 instance = "Nougat32"
