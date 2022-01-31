@@ -44,10 +44,10 @@ class LoginModule(
 //        device.tap(640, 600) //开始游戏
         device.tap(1200, 95).nap() //切换用户
 
-        device.tapd(570, 272).nap() //选择用户名
+        device.tapl(508, 280).nap() //选择用户名
         device.input(config.username).nap()
 
-        device.tapd(570, 336).nap() //选择密码
+        device.tapl(570, 342).nap() //选择密码
         device.input(config.password).nap()
 
         device.tap(826, 411) //登录
