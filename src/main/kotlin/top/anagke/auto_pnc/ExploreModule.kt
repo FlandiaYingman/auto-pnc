@@ -1,16 +1,13 @@
 package top.anagke.auto_pnc
 
 import mu.KotlinLogging
-import top.anagke.auto_android.*
+import top.anagke.auto_android.device.*
 import top.anagke.auto_android.img.Tmpl
 import top.anagke.auto_android.util.minutes
 
 private val logger = KotlinLogging.logger {}
 
-class ExploreModule(
-    private val config: AutoPncConfig,
-    private val device: Device = findEmulator(config.emulators),
-) : AutoModule {
+class ExploreModule(auto: AutoPnc) : PncModule(auto) {
 
     companion object {
 
@@ -28,12 +25,9 @@ class ExploreModule(
 
         private val 算法采集区域2_已折叠 by tmpl()
         private val 算法采集区域2_未折叠 by tmpl()
-
-        @JvmStatic
-        fun main(args: Array<String>) {
-            ExploreModule(AutoPncConfig.loadConfig()).auto()
-        }
     }
+
+    override val name = "探索模块"
 
     override fun run() {
         logger.info { "探索：开始" }
@@ -135,8 +129,4 @@ class ExploreModule(
         sleep()
     }
 
-}
-
-fun main() {
-    ExploreModule(AutoPncConfig.loadConfig(), Device()).farm算法采集()
 }

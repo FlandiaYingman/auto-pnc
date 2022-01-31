@@ -1,25 +1,22 @@
 package top.anagke.auto_pnc
 
 import mu.KotlinLogging
-import top.anagke.auto_android.*
+import top.anagke.auto_android.device.assert
+import top.anagke.auto_android.device.await
+import top.anagke.auto_android.device.match
+import top.anagke.auto_android.device.nap
 import top.anagke.auto_android.img.Tmpl
 
 private val logger = KotlinLogging.logger {}
 
-class OasisModule(
-    private val config: AutoPncConfig,
-    private val device: Device = findEmulator(config.emulators),
-) : AutoModule {
+class OasisModule(auto: AutoPnc) : PncModule(auto) {
 
     companion object {
         private val 绿洲界面: Tmpl by tmpl()
         private val 绿洲界面_可收取: Tmpl by tmpl()
-
-        @JvmStatic
-        fun main(args: Array<String>) {
-            OasisModule(AutoPncConfig.loadConfig()).auto()
-        }
     }
+
+    override val name = "绿洲模块"
 
     override fun run() {
         logger.info { "绿洲：开始" }

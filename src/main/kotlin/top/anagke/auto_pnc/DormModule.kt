@@ -1,25 +1,19 @@
 package top.anagke.auto_pnc
 
 import mu.KotlinLogging
-import top.anagke.auto_android.*
+import top.anagke.auto_android.device.*
 import top.anagke.auto_android.img.Tmpl
 
 private val logger = KotlinLogging.logger {}
 
-class DormModule(
-    private val config: AutoPncConfig,
-    private val device: Device = findEmulator(config.emulators),
-) : AutoModule {
+class DormModule(auto: AutoPnc) : PncModule(auto) {
 
     companion object {
         private val 宿舍界面: Tmpl by tmpl()
         private val 宿舍界面_可收取: Tmpl by tmpl()
-
-        @JvmStatic
-        fun main(args: Array<String>) {
-            DormModule(AutoPncConfig.loadConfig()).auto()
-        }
     }
+
+    override val name = "宿舍模块"
 
     override fun run() {
         logger.info { "宿舍：开始" }

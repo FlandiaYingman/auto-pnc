@@ -1,24 +1,13 @@
 package top.anagke.auto_pnc
 
-import com.sksamuel.hoplite.ConfigLoader
-import mu.KotlinLogging
-import top.anagke.auto_android.*
+import top.anagke.auto_android.AutoAndroid
+import top.anagke.auto_android.AutoModule
+import top.anagke.auto_android.device.*
 import top.anagke.auto_android.img.Img
 import top.anagke.auto_android.img.Tmpl
-import top.anagke.auto_android.util.hours
-import java.nio.file.NoSuchFileException
-import java.nio.file.Path
-import kotlin.concurrent.thread
-import kotlin.io.path.exists
 import kotlin.reflect.KProperty
 
-private val logger = KotlinLogging.logger {}
-
-private val maxTries = 2
-private val timeout = 1.hours
-
-
-fun tmpl(diff: Double = 0.05) = TmplDelegate(diff)
+fun tmpl(diff: Double = 0.01) = TmplDelegate(diff)
 
 class TmplDelegate(private val diff: Double) {
     private var tmpl: Tmpl? = null
@@ -26,15 +15,17 @@ class TmplDelegate(private val diff: Double) {
         if (tmpl == null) {
             val name = "${property.name}.png"
             val kClass = thisRef?.let { it::class.java } ?: AutoPnc::class.java
-            val tmplBytes = kClass
-                .getResource(name)!!
-                .readBytes()
+            val tmplBytes = kClass.getResource(name)!!.readBytes()
             tmpl = Tmpl(name, diff, Img.decode(tmplBytes)!!)
         }
         return tmpl!!
     }
 }
 
+val PNC_ACTIVITY = AndroidActivity(
+    "com.sunborn.neuralcloud.cn",
+    "com.mica.micasdk.ui.FoundationActivity",
+)
 
 // 主界面
 val 主界面: Tmpl by tmpl()
@@ -50,7 +41,7 @@ fun Device.jumpOut() {
     tap(250, 50)
     await(主界面, 主界面_拖出)
     if (matched(主界面_拖出)) {
-        dragd(840, 360, 400, 0).sleep() //使“心智检索”可见
+        dragv(840, 360, 400, 0).sleep() //使“心智检索”可见
     }
     await(主界面)
 }
@@ -62,125 +53,29 @@ fun Device.jumpBack() {
 
 
 class AutoPnc(
-    config: AutoPncConfig = AutoPncConfig.loadConfig(),
-    device: Device = findEmulator(config.emulators),
-) : AutoCloseable {
+    val config: AutoPncConfig,
+    device: Device,
+) : AutoAndroid<AutoPnc>(device) {
 
-    init {
-
-    }
-
-
-    private val initModule: AutoModule = LoginModule(config, device)
-
-    private val modules: List<AutoModule> = listOf(
-        DormModule(config, device),
-        OasisModule(config, device),
-        FactoryModule(config, device),
-        SearchModule(config, device),
-        ExploreModule(config, device),
-        MissionModule(config, device),
-        ExploreModule(config, device),
+    override val name = "自动云图"
+    override val initModules = listOf<AutoModule<AutoPnc>>(
+        LoginModule(this),
+    )
+    override val workModules = listOf<AutoModule<AutoPnc>>(
+        DormModule(this),
+        OasisModule(this),
+        FactoryModule(this),
+        SearchModule(this),
+        ExploreModule(this),
+        MissionModule(this),
+        ExploreModule(this),
+    )
+    override val finalModules = listOf(
+        createModule("清理模块") { device.stop(PNC_ACTIVITY, description = "停止云图计划") },
     )
 
-    private fun initGame() {
-        check(open)
-        for (tries in 1..maxTries) {
-            try {
-                initModule.auto()
-                return
-            } catch (e: Exception) {
-                if (e is InterruptedException) throw e
-                if (tries != maxTries) {
-                    logger.warn(e) { "运行初始模块 ${initModule.name} 时发生错误。已尝试：$tries/$maxTries 次；重新尝试……" }
-                } else {
-                    logger.error(e) { "运行初始模块 ${initModule.name} 时发生错误。已尝试：$tries/$maxTries 次；无法继续运行，退出。" }
-                    this.close()
-                }
-            }
-        }
+    override fun isAtMain() = device.match(主界面)
 
-    }
-
-    private fun runModule(module: AutoModule) {
-        check(open)
-        for (tries in 1..maxTries) {
-            try {
-                module.auto()
-                break
-            } catch (e: Exception) {
-                if (e is InterruptedException) throw e
-                if (tries != maxTries) {
-                    logger.warn(e) { "运行模块 ${module.name} 时发生错误。已尝试：$tries/$maxTries 次；重新尝试……" }
-                } else {
-                    logger.error(e) { "运行模块 ${module.name} 时发生错误。已尝试：$tries/$maxTries 次；无法继续运行该模块。" }
-                }
-                initGame()
-            }
-        }
-    }
-
-
-    /**
-     * Automates PNC.
-     */
-    fun auto() {
-        check(open)
-        val runner = thread {
-            try {
-                this.run()
-            } catch (e: InterruptedException) {
-                logger.warn { "自动云图：终止。" }
-            }
-        }
-        runner.join(timeout)
-        if (runner.isAlive) {
-            logger.warn { "自动云图已运行 $timeout ms，超时，尝试终止。" }
-            runner.interrupt()
-        }
-    }
-
-    fun run() {
-        initGame()
-        modules.forEach(this::runModule)
-    }
-
-    private var open = true
-    override fun close() {
-        open = false
-    }
-
-}
-
-
-data class AutoPncConfig(
-    val cacheLocation: Path,
-    val emulators: List<Emulator>,
-    val username: String,
-    val password: String,
-) {
-
-    companion object {
-
-        private val baseConfigFiles = listOf(
-            Path.of("./base-config.toml"),
-            //...
-        )
-
-        private val defaultConfigFiles = listOf(
-            Path.of("./config.toml"),
-            //...
-        )
-
-
-        fun loadConfig(givenConfigFiles: List<Path> = emptyList()): AutoPncConfig {
-            val baseConfigFile = findExisting(baseConfigFiles) ?: throw NoSuchFileException("$baseConfigFiles")
-            val configFile = findExisting((givenConfigFiles + defaultConfigFiles))
-            return ConfigLoader().loadConfigOrThrow(listOfNotNull(configFile, baseConfigFile))
-        }
-
-        private fun findExisting(paths: List<Path>) = paths.find { it.exists() }
-
-    }
+    override fun returnToMain() = device.jumpOut()
 
 }

@@ -1,26 +1,20 @@
 package top.anagke.auto_pnc
 
 import mu.KotlinLogging
-import top.anagke.auto_android.*
+import top.anagke.auto_android.device.*
 import top.anagke.auto_android.img.Tmpl
 
 private val logger = KotlinLogging.logger {}
 
-class FactoryModule(
-    private val config: AutoPncConfig,
-    private val device: Device = findEmulator(config.emulators),
-) : AutoModule {
+class FactoryModule(auto: AutoPnc) : PncModule(auto) {
 
     companion object {
         private val 加工厂界面: Tmpl by tmpl()
         private val 加工厂界面_可领取: Tmpl by tmpl(diff = 0.025)
         private val 加工厂界面_可加速: Tmpl by tmpl(diff = 0.025)
-
-        @JvmStatic
-        fun main(args: Array<String>) {
-            FactoryModule(AutoPncConfig.loadConfig()).auto()
-        }
     }
+
+    override val name = "加工厂模块"
 
     private enum class Room(val x: Int, val y: Int) {
         采掘矿场(497, 185),

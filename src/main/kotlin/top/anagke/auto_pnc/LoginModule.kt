@@ -1,30 +1,22 @@
 package top.anagke.auto_pnc
 
 import mu.KotlinLogging
-import top.anagke.auto_android.*
+import top.anagke.auto_android.device.await
+import top.anagke.auto_android.device.findEdge
+import top.anagke.auto_android.device.nap
+import top.anagke.auto_android.device.whileNotMatch
 import top.anagke.auto_android.img.Tmpl
 
 private val logger = KotlinLogging.logger {}
 
-class LoginModule(
-    private val config: AutoPncConfig,
-    private val device: Device = findEmulator(config.emulators),
-) : AutoModule {
+class LoginModule(auto: AutoPnc) : PncModule(auto) {
 
     companion object {
-        private val PNC_ACTIVITY = AndroidActivity(
-            "com.sunborn.neuralcloud.cn",
-            "com.mica.micasdk.ui.FoundationActivity",
-        )
-
         private val 登录界面: Tmpl by tmpl()
         private val 主界面_可退出: Tmpl by tmpl(0.15)
-
-        @JvmStatic
-        fun main(args: Array<String>) {
-            LoginModule(AutoPncConfig.loadConfig()).auto()
-        }
     }
+
+    override val name = "登录模块"
 
     override fun run() {
         logger.info { "登录：开始" }
@@ -48,7 +40,7 @@ class LoginModule(
         device.input(config.username).nap()
 
         device.tapl(570, 342).nap() //选择密码
-        device.input(config.password).nap()
+        device.inputSecret(config.password).nap()
 
         device.tap(826, 411) //登录
         repeat(2) {

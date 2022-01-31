@@ -1,24 +1,18 @@
 package top.anagke.auto_pnc
 
 import mu.KotlinLogging
-import top.anagke.auto_android.*
+import top.anagke.auto_android.device.*
 import top.anagke.auto_android.img.Tmpl
 
 private val logger = KotlinLogging.logger {}
 
-class MissionModule(
-    private val config: AutoPncConfig,
-    private val device: Device = findEmulator(config.emulators),
-) : AutoModule {
+class MissionModule(auto: AutoPnc) : PncModule(auto) {
 
     companion object {
         private val 主界面_可完成任务: Tmpl by tmpl()
-
-        @JvmStatic
-        fun main(args: Array<String>) {
-            MissionModule(AutoPncConfig.loadConfig()).auto()
-        }
     }
+
+    override val name = "任务模块"
 
     override fun run() {
         logger.info { "任务：开始" }
@@ -32,7 +26,7 @@ class MissionModule(
         logger.info { "任务：升级人形：开始" }
         device.assert(主界面)
         tap(1244, 194).sleep()
-        dragd(1083, 665, 0, -2160)
+        dragv(1083, 665, 0, -2160)
         tap(181, 561).nap()
         tap(181, 561).nap()
         tap(1128, 485).nap()
