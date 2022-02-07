@@ -31,8 +31,8 @@ dependencies {
     implementation("io.github.microutils:kotlin-logging:2.1.21")
 
     // Serialization Frameworks
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.3.1")
-    implementation("com.charleskorn.kaml:kaml:0.38.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.3.2")
+    implementation("com.charleskorn.kaml:kaml:0.40.0")
     implementation("com.google.code.gson:gson:2.8.9")
 
     // Config Parsing Frameworks
