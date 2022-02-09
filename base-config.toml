@@ -5,3 +5,7 @@ password = "<password>"
 [emulator]
 blueStacksHome = "C:/Program Files/BlueStacks_nxt"
 blueStacksData = "C:/ProgramData/BlueStacks_nxt"
+
+[exploreConfig]
+vulnerabilityLevel = "谬误深渊"
+vulnerabilityPlan = [[0, 1, 2], [], [6, 7, 8], [], [6, 7, 8], [], [6, 7, 8]]

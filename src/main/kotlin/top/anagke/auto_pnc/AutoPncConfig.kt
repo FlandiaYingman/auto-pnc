@@ -2,6 +2,7 @@ package top.anagke.auto_pnc
 
 import com.sksamuel.hoplite.ConfigLoader
 import top.anagke.auto_android.device.BlueStacks
+import top.anagke.auto_pnc.explore.ExploreConfig
 import java.nio.file.NoSuchFileException
 import java.nio.file.Path
 import kotlin.io.path.exists
@@ -11,6 +12,7 @@ data class AutoPncConfig(
     val emulator: BlueStacks,
     val username: String,
     val password: String,
+    val exploreConfig: ExploreConfig
 ) {
 
     companion object {

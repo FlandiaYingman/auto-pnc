@@ -1,15 +1,16 @@
-package top.anagke.auto_pnc
+package top.anagke.auto_pnc.explore
 
 import mu.KotlinLogging
 import top.anagke.auto_android.device.*
 import top.anagke.auto_android.img.Tmpl
 import top.anagke.auto_android.util.minutes
+import top.anagke.auto_pnc.*
 
-private val logger = KotlinLogging.logger {}
 
 class ExploreModule(auto: AutoPnc) : PncModule(auto) {
 
     companion object {
+        private val logger = KotlinLogging.logger {}
 
         private val canFarmAI: Tmpl by tmpl()
         private val atPrepareScreen: Tmpl by tmpl()
@@ -25,6 +26,12 @@ class ExploreModule(auto: AutoPnc) : PncModule(auto) {
 
         private val 算法采集区域2_已折叠 by tmpl()
         private val 算法采集区域2_未折叠 by tmpl()
+
+        @JvmStatic
+        fun main(args: Array<String>) {
+            val auto = AutoPnc.default()
+            ExploreModule(auto).farm漏洞排查()
+        }
     }
 
     override val name = "探索模块"
@@ -32,8 +39,8 @@ class ExploreModule(auto: AutoPnc) : PncModule(auto) {
     override fun run() {
         logger.info { "探索：开始" }
         enterExplore()
+        farm漏洞排查()
         farm碎片搜索()
-        repositionExplore()
         farm算法采集()
         quitExplore()
         logger.info { "探索：完成" }
@@ -43,16 +50,15 @@ class ExploreModule(auto: AutoPnc) : PncModule(auto) {
         assert(主界面)
         tap(1085, 230) //探索
         await(可跳出)
-        repositionExplore()
     }
 
     fun repositionExplore() = device.apply {
-        drag(16, 64, 1280, 720).nap() //拖到左上角
-        drag(16, 64, 1280, 720).nap() //拖到左上角
-        drag(640, 720, 16, 16).nap() //拖到默认位置
+        swipev(640, 360, 1280 * 3, 720 * 3, 10.0, description = "拖至左上角").nap()
+        drag(640, 720, 16, 16, description = "拖到默认位置").nap()
     }
 
     fun farm碎片搜索() = device.apply {
+        repositionExplore()
         logger.info { "探索：farm碎片搜素" }
         tapd(705, 80).sleep() //碎片搜索
         assert(可自动战斗, 可自动战斗_禁用)
@@ -72,6 +78,7 @@ class ExploreModule(auto: AutoPnc) : PncModule(auto) {
     }
 
     fun farm算法采集() = device.apply {
+        repositionExplore()
         logger.info { "探索：farm算法采集" }
         tapd(722, 224).sleep() //算法采集
         assert(可自动战斗_算法采集, 可自动战斗_禁用_算法采集)
@@ -105,6 +112,16 @@ class ExploreModule(auto: AutoPnc) : PncModule(auto) {
         whileMatch(获得奖励) {
             tap(670, 495).sleep() //完成
         }
+    }
+
+    fun farm漏洞排查() = device.apply {
+        repositionExplore()
+        tapd(142, 353, description = "点击漏洞排查").sleep()
+        Vulnerability.apply {
+            run(config.exploreConfig.vulnerabilityLevel, config.exploreConfig.vulnerabilityPlan)
+        }
+        jumpBack()
+        jumpBack()
     }
 
     fun quitExplore() = device.apply {

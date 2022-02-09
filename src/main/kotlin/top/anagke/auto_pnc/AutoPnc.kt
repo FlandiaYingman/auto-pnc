@@ -5,6 +5,7 @@ import top.anagke.auto_android.AutoModule
 import top.anagke.auto_android.device.*
 import top.anagke.auto_android.img.Img
 import top.anagke.auto_android.img.Tmpl
+import top.anagke.auto_pnc.explore.ExploreModule
 import kotlin.reflect.KProperty
 
 fun tmpl(diff: Double = 0.01) = TmplDelegate(diff)
@@ -56,6 +57,13 @@ class AutoPnc(
     val config: AutoPncConfig,
     device: Device,
 ) : AutoAndroid<AutoPnc>(device) {
+
+    companion object {
+        fun default(): AutoPnc {
+            val config = AutoPncConfig.loadConfig()
+            return AutoPnc(config, config.emulator.launch().device)
+        }
+    }
 
     override val name = "自动云图"
     override val initModules = listOf<AutoModule<AutoPnc>>(
