@@ -64,10 +64,19 @@ class FactoryModule(auto: AutoPnc) : PncModule(auto) {
     private fun submitTask(room: Room, itemIndexRange: IntRange) = submitTask(room, itemIndexRange.toList())
 
     private fun submitTasks() {
-        submitTask(Room.采掘矿场, 2..10) //随机的“……数据”
-        submitTask(Room.物资车间, (1..2) + (9..9)) //“作战经验”或“基础检索指令”或“算法素材箱”
-        submitTask(Room.礼品工房, 0..7) //蓝色礼物
-        submitTask(Room.数据封装中心, listOf(5, 5, 5, 6)) //75% 技能枢核、25% 技能素材箱
+        // 采掘矿场的生产取决于其它三个房间的生产。
+        // 由于绿洲会产出底格币和预制件，所以采掘矿场不考虑它们。
+        // 采掘矿场生产随机低模数据，为基础检索指令；生产中模三角和菱形数据，为技能枢核。
+        submitTask(Room.采掘矿场, (2..4) + (6..7))
+
+        // 物资车间只自动生产基础检索指令。算法相关的道具不消耗太多时间，可以手动生产并加速。
+        submitTask(Room.物资车间, listOf(2))
+
+        // 礼品工房生产橙色礼物，由于橙色礼物效率最高，且生产蓝色礼物会消耗本应留给技能枢核的低模数据。
+        submitTask(Room.礼品工房, 16..23)
+
+        // 只生产技能枢核
+        submitTask(Room.数据封装中心, listOf(5)) //75% 技能枢核、25% 技能素材箱
     }
 
     private fun exitFactory() {
