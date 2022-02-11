@@ -1,8 +1,9 @@
-package top.anagke.auto_pnc
+package top.anagke.auto_pnc.factory
 
 import mu.KotlinLogging
 import top.anagke.auto_android.device.*
 import top.anagke.auto_android.img.Tmpl
+import top.anagke.auto_pnc.*
 
 private val logger = KotlinLogging.logger {}
 

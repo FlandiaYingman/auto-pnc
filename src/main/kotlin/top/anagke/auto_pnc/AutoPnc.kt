@@ -6,6 +6,7 @@ import top.anagke.auto_android.device.*
 import top.anagke.auto_android.img.Img
 import top.anagke.auto_android.img.Tmpl
 import top.anagke.auto_pnc.explore.ExploreModule
+import top.anagke.auto_pnc.factory.FactoryModule
 import kotlin.reflect.KProperty
 
 fun tmpl(diff: Double = 0.01) = TmplDelegate(diff)
