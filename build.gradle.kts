@@ -41,6 +41,9 @@ dependencies {
 
     // CLI Argument Parsing Frameworks
     implementation("org.jetbrains.kotlinx:kotlinx-cli:0.3.4")
+
+    // Utils
+    implementation("org.reflections:reflections:0.10.2")
 }
 
 java {
