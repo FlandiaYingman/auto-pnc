@@ -62,7 +62,7 @@ class AutoPnc(
     companion object {
         fun default(): AutoPnc {
             val config = AutoPncConfig.loadConfig()
-            return AutoPnc(config, config.emulator.launch().device)
+            return AutoPnc(config, BlueStacks(config.emulator).launch().device)
         }
     }
 
