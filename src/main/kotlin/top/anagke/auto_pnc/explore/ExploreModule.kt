@@ -3,6 +3,7 @@ package top.anagke.auto_pnc.explore
 import mu.KotlinLogging
 import top.anagke.auto_android.device.*
 import top.anagke.auto_android.img.Tmpl
+import top.anagke.auto_android.util.Pos
 import top.anagke.auto_android.util.minutes
 import top.anagke.auto_pnc.*
 
@@ -12,9 +13,10 @@ class ExploreModule(auto: AutoPnc) : PncModule(auto) {
     companion object {
         private val logger = KotlinLogging.logger {}
 
-        private val canFarmAI: Tmpl by tmpl()
-        private val atPrepareScreen: Tmpl by tmpl()
+        private val 准备作战: Tmpl by tmpl()
+        private val 作战开始: Tmpl by tmpl()
         private val canAI: Tmpl by tmpl()
+        private val 动态结算界面: Tmpl by tmpl()
         private val 作战成功: Tmpl by tmpl()
 
         private val 可自动战斗: Tmpl by tmpl()
@@ -65,12 +67,12 @@ class ExploreModule(auto: AutoPnc) : PncModule(auto) {
 
         tap(76, 225).nap() //第一位人形
         if (match(可自动战斗)) {
-            自动战斗(farmAll = true, epX = 1110)
+            自动战斗(farmAll = true, epPos = Pos(1110, 492))
         }
 
         tap(76, 328).nap() //第二位人形
         if (match(可自动战斗)) {
-            自动战斗(farmAll = true, epX = 1110)
+            自动战斗(farmAll = true, epPos = Pos(1110, 492))
         }
 
         jumpBack()
@@ -91,16 +93,22 @@ class ExploreModule(auto: AutoPnc) : PncModule(auto) {
             }
         }
         if (match(可自动战斗_算法采集)) {
-            自动战斗(farmAll = true, epX = 1110)
+            自动战斗(farmAll = true, epPos = Pos(1110, 492))
         }
 
         jumpBack()
         logger.info { "探索：完成farm算法采集" }
     }
 
-    private fun Device.自动战斗(farmAll: Boolean = false, epX: Int = 386) {
+    /**
+     * 自动战斗兼容的副本。 目前支持的副本：
+     * - 碎片搜索
+     * - 资源收集
+     * - 算法采集
+     */
+    private fun Device.自动战斗(farmAll: Boolean = false, epPos: Pos = Pos(386, 492)) {
         assert(可自动战斗, 可自动战斗_算法采集)
-        tap(epX, 492).nap()
+        tap(epPos).nap()
         tap(858, 622).sleep() //自动战斗
         if (farmAll) {
             drag(462, 400, 816, 400).sleep()
@@ -128,22 +136,42 @@ class ExploreModule(auto: AutoPnc) : PncModule(auto) {
         jumpOut()
     }
 
-
-    fun farmAI() = device.apply {
-        await(canFarmAI)
-        tap(1127, 636) //准备作战
-
-        await(atPrepareScreen)
-        tap(1127, 636) //作战开始
-
-        whileNotMatch(canAI) {
-            tap(200, 550).nap() //开启计划模式
+    fun farmActivity(levelPos: Pos = Pos(640, 360), useItem: Boolean) = device.apply {
+        whileNotMatch(准备作战) {
+            tap(levelPos, description = "点击副本").nap()
         }
-        tap(326, 547) //执行计划
 
-        await(作战成功, timeout = 5.minutes)
-        tap(1052, 623) //返回
+        tap(1127, 636, description = "准备作战")
+        await(作战开始)
+
+        tap(1127, 636, description = "作战开始")
+        farmAI()
+
+    }
+
+    fun farmAI(levelPos: Pos = Pos(640, 360)) = device.apply {
+        whileNotMatch(canAI) {
+            tap(200, 550, description = "开启计划模式").nap() //开启计划模式
+        }
+
+        tap(326, 547, description = "执行计划")
+        await(动态结算界面, 作战成功, timeout = 5.minutes)
+
+        if (matched(动态结算界面)) {
+            tap(897, 627, description = "领取").sleep()
+            await(作战成功, timeout = 5.minutes)
+        }
+
+        tap(1052, 623, description = "返回")
         sleep()
     }
 
+}
+
+fun main() {
+    ExploreModule(AutoPnc.default()).apply {
+        while (true) {
+            farmActivity(useItem = true)
+        }
+    }
 }
