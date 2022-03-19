@@ -6,6 +6,7 @@ import top.anagke.auto_android.device.findEdge
 import top.anagke.auto_android.device.nap
 import top.anagke.auto_android.device.whileNotMatch
 import top.anagke.auto_android.img.Tmpl
+import top.anagke.auto_android.util.minutes
 
 private val logger = KotlinLogging.logger {}
 
@@ -32,7 +33,7 @@ class LoginModule(auto: AutoPnc) : PncModule(auto) {
 
     private fun login() {
         logger.info { "登录：用户“${config.username}”" }
-        device.await(登录界面)
+        device.await(登录界面, timeout = 15.minutes)
 //        device.tap(640, 600) //开始游戏
         device.tap(1200, 95).nap() //切换用户
 
