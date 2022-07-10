@@ -31,7 +31,7 @@ data class AutoPncConfig(
         fun loadConfig(givenConfigFiles: List<Path> = emptyList()): AutoPncConfig {
             val baseConfigFile = findExisting(baseConfigFiles) ?: throw NoSuchFileException("$baseConfigFiles")
             val configFile = findExisting((givenConfigFiles + defaultConfigFiles))
-            return ConfigLoader().loadConfigOrThrow(listOfNotNull(configFile, baseConfigFile))
+            return ConfigLoader().loadConfigOrThrow(listOfNotNull(configFile?.toString(), baseConfigFile.toString()))
         }
 
         private fun findExisting(paths: List<Path>) = paths.find { it.exists() }
