@@ -1,9 +1,9 @@
 package top.anagke.auto_pnc.explore
 
-import mu.KotlinLogging
+import org.tinylog.kotlin.Logger
 import top.anagke.auto_android.device.*
+import top.anagke.auto_android.img.Pos
 import top.anagke.auto_android.img.Tmpl
-import top.anagke.auto_android.util.Pos
 import top.anagke.auto_android.util.minutes
 import top.anagke.auto_pnc.*
 
@@ -11,7 +11,7 @@ import top.anagke.auto_pnc.*
 class ExploreModule(auto: AutoPnc) : PncModule(auto) {
 
     companion object {
-        private val logger = KotlinLogging.logger {}
+
 
         private val 准备作战: Tmpl by tmpl()
         private val 作战开始: Tmpl by tmpl()
@@ -39,13 +39,13 @@ class ExploreModule(auto: AutoPnc) : PncModule(auto) {
     override val name = "探索模块"
 
     override fun run() {
-        logger.info { "探索：开始" }
+        Logger.info { "探索：开始" }
         enterExplore()
         farm漏洞排查()
         farm碎片搜索()
         farm算法采集()
         quitExplore()
-        logger.info { "探索：完成" }
+        Logger.info { "探索：完成" }
     }
 
     fun enterExplore() = device.apply {
@@ -61,7 +61,7 @@ class ExploreModule(auto: AutoPnc) : PncModule(auto) {
 
     fun farm碎片搜索() = device.apply {
         repositionExplore()
-        logger.info { "探索：farm碎片搜素" }
+        Logger.info { "探索：farm碎片搜素" }
         tapd(705, 80).sleep() //碎片搜索
         assert(可自动战斗, 可自动战斗_禁用)
 
@@ -76,12 +76,12 @@ class ExploreModule(auto: AutoPnc) : PncModule(auto) {
         }
 
         jumpBack()
-        logger.info { "探索：完成farm碎片搜素" }
+        Logger.info { "探索：完成farm碎片搜素" }
     }
 
     fun farm算法采集() = device.apply {
         repositionExplore()
-        logger.info { "探索：farm算法采集" }
+        Logger.info { "探索：farm算法采集" }
         tapd(722, 224).sleep() //算法采集
         assert(可自动战斗_算法采集, 可自动战斗_禁用_算法采集)
         when (which(算法采集区域2_未折叠, 算法采集区域2_已折叠)) {
@@ -97,7 +97,7 @@ class ExploreModule(auto: AutoPnc) : PncModule(auto) {
         }
 
         jumpBack()
-        logger.info { "探索：完成farm算法采集" }
+        Logger.info { "探索：完成farm算法采集" }
     }
 
     /**

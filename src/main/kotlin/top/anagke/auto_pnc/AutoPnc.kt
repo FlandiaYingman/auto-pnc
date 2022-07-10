@@ -5,23 +5,51 @@ import top.anagke.auto_android.AutoModule
 import top.anagke.auto_android.device.*
 import top.anagke.auto_android.img.Img
 import top.anagke.auto_android.img.Tmpl
+import top.anagke.auto_android.img.TmplType
 import top.anagke.auto_pnc.explore.ExploreModule
 import top.anagke.auto_pnc.factory.FactoryModule
 import kotlin.reflect.KProperty
 
-fun tmpl(diff: Double = 0.01) = TmplDelegate(diff)
+fun tmpl(diff: Double = 0.05, type: TmplType = TmplType.REGULAR) = TmplDelegate(diff, type)
 
-class TmplDelegate(private val diff: Double) {
+class TmplDelegate(private val diff: Double, private val type: TmplType) {
+
     private var tmpl: Tmpl? = null
+
     operator fun getValue(thisRef: Any?, property: KProperty<*>): Tmpl {
         if (tmpl == null) {
-            val name = "${property.name}.png"
+            val name = property.name
             val kClass = thisRef?.let { it::class.java } ?: AutoPnc::class.java
-            val tmplBytes = kClass.getResource(name)!!.readBytes()
-            tmpl = Tmpl(name, diff, Img.decode(tmplBytes)!!)
+            tmpl = findSingle(name, kClass) ?: findMultiple(name, kClass)
+                    ?: throw Exception("cannot find template with given name '$name'")
         }
         return tmpl!!
     }
+
+    private fun findSingle(name: String, kClass: Class<*>): Tmpl? {
+        return kClass
+            .getResource("${name}.png")
+            ?.readBytes()
+            ?.let { Tmpl(name, diff, listOf(Img.decode(it)!!), type) }
+    }
+
+    private fun findMultiple(name: String, kClass: Class<*>): Tmpl? {
+        val imgs = mutableListOf<Img>()
+        var i = 0
+        while (true) {
+            val img = kClass
+                .getResource("${name}_${i++}.png")
+                ?.readBytes()
+                ?.let { Img.decode(it) }
+            if (img == null) {
+                break
+            } else {
+                imgs += img
+            }
+        }
+        return Tmpl("${name}.png", diff, imgs, type)
+    }
+
 }
 
 val PNC_ACTIVITY = AndroidActivity(

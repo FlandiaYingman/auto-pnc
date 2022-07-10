@@ -1,14 +1,13 @@
 package top.anagke.auto_pnc
 
 
-import mu.KotlinLogging
+import org.tinylog.kotlin.Logger
 import top.anagke.auto_android.device.assert
 import top.anagke.auto_android.device.nap
 import top.anagke.auto_android.device.sleep
 import top.anagke.auto_android.device.whileNotMatch
 import top.anagke.auto_android.img.Tmpl
 
-private val logger = KotlinLogging.logger {}
 
 class SearchModule(auto: AutoPnc) : PncModule(auto) {
 
@@ -19,7 +18,7 @@ class SearchModule(auto: AutoPnc) : PncModule(auto) {
     override val name = "检索模块"
 
     override fun run() = device.run {
-        logger.info { "心智检索：开始" }
+        Logger.info { "心智检索：开始" }
         assert(主界面)
 
         dragv(1240, 360, -400, 0).nap() //使“心智检索”可见
@@ -47,7 +46,7 @@ class SearchModule(auto: AutoPnc) : PncModule(auto) {
         tap(640, 520).nap() //确认“检索指令数量不足”
 
         jumpOut()
-        logger.info { "心智检索：完成" }
+        Logger.info { "心智检索：完成" }
     }
 
 }

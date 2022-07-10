@@ -1,11 +1,12 @@
 package top.anagke.auto_pnc.factory
 
-import mu.KotlinLogging
+import org.tinylog.kotlin.Logger
 import top.anagke.auto_android.device.*
+import top.anagke.auto_android.device.operation.whileFind
+import top.anagke.auto_android.img.Pos
 import top.anagke.auto_android.img.Tmpl
 import top.anagke.auto_pnc.*
 
-private val logger = KotlinLogging.logger {}
 
 class FactoryModule(auto: AutoPnc) : PncModule(auto) {
 
@@ -17,20 +18,60 @@ class FactoryModule(auto: AutoPnc) : PncModule(auto) {
 
     override val name = "加工厂模块"
 
-    private enum class Room(val x: Int, val y: Int) {
-        采掘矿场(497, 185),
-        物资车间(789, 186),
-        礼品工房(350, 357),
-        数据封装中心(615, 366)
+    private enum class Room(val x: Int, val y: Int, val selector: TableSelector) {
+        采掘矿场(
+            497, 185,
+            VerticalListSelector(
+                Pos(1060, 195),
+                Pos(1060, 645),
+                111,
+                127,
+                5,
+                10,
+            )
+        ),
+        物资车间(
+            789, 186,
+            VerticalListSelector(
+                Pos(1060, 195),
+                Pos(1060, 645),
+                111,
+                127,
+                5,
+                10,
+            )
+        ),
+        礼品工房(
+            350, 357,
+            VerticalListSelector(
+                Pos(1060, 195),
+                Pos(1060, 645),
+                111,
+                127,
+                5,
+                10,
+            )
+        ),
+        数据封装中心(
+            615, 366,
+            VerticalListSelector(
+                Pos(1060, 195),
+                Pos(1060, 645),
+                111,
+                127,
+                5,
+                10,
+            )
+        )
     }
 
     override fun run() {
-        logger.info { "加工厂：开始" }
+        Logger.info { "加工厂：开始" }
         enterFactory()
         collectTasks()
         submitTasks()
         exitFactory()
-        logger.info { "加工厂：完成" }
+        Logger.info { "加工厂：完成" }
     }
 
     private fun enterFactory() {
@@ -55,7 +96,9 @@ class FactoryModule(auto: AutoPnc) : PncModule(auto) {
 
     private fun submitTask(room: Room, itemIndexRange: List<Int>) {
         device.tap(room.x, room.y).nap() //指定房间
-        device.tapdListItem(itemIndexRange.random(), 5, 1080, 190, 128, 110).nap()
+        room.selector.copy().apply {
+            device.tapItem(fromSeqNum(itemIndexRange.random())).nap()
+        }
         device.tap(762, 565).nap() //最多
         device.tap(723, 639).nap() //确认
         device.tapd(390, 691).nap() //确保返回到加工厂界面

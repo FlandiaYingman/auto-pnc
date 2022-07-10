@@ -1,10 +1,8 @@
 package top.anagke.auto_pnc
 
-import mu.KotlinLogging
+import org.tinylog.kotlin.Logger
 import top.anagke.auto_android.device.*
 import top.anagke.auto_android.img.Tmpl
-
-private val logger = KotlinLogging.logger {}
 
 class DormModule(auto: AutoPnc) : PncModule(auto) {
 
@@ -16,11 +14,11 @@ class DormModule(auto: AutoPnc) : PncModule(auto) {
     override val name = "宿舍模块"
 
     override fun run() {
-        logger.info { "宿舍：开始" }
+        Logger.info { "宿舍：开始" }
         enterDorm()
         collectResources()
         exitDorm()
-        logger.info { "宿舍：结束" }
+        Logger.info { "宿舍：结束" }
     }
 
     private fun enterDorm() {

@@ -1,13 +1,12 @@
 package top.anagke.auto_pnc
 
-import mu.KotlinLogging
+import org.tinylog.kotlin.Logger
 import top.anagke.auto_android.device.assert
 import top.anagke.auto_android.device.await
 import top.anagke.auto_android.device.match
 import top.anagke.auto_android.device.nap
 import top.anagke.auto_android.img.Tmpl
 
-private val logger = KotlinLogging.logger {}
 
 class OasisModule(auto: AutoPnc) : PncModule(auto) {
 
@@ -19,11 +18,11 @@ class OasisModule(auto: AutoPnc) : PncModule(auto) {
     override val name = "绿洲模块"
 
     override fun run() {
-        logger.info { "绿洲：开始" }
+        Logger.info { "绿洲：开始" }
         enterOasis()
         collectResources()
         exitOasis()
-        logger.info { "绿洲：结束" }
+        Logger.info { "绿洲：结束" }
     }
 
     private fun enterOasis() {

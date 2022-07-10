@@ -1,8 +1,8 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.6.10"
-    kotlin("plugin.serialization") version "1.6.10"
+    kotlin("jvm") version "1.7.0"
+    kotlin("plugin.serialization") version "1.7.0"
 
     application
 }
@@ -26,18 +26,18 @@ dependencies {
     implementation("top.anagke:auto-android:1.0.0")
 
     // Log Frameworks
-    implementation("ch.qos.logback:logback-core:1.3.0-alpha5")
-    implementation("ch.qos.logback:logback-classic:1.3.0-alpha5")
-    implementation("io.github.microutils:kotlin-logging:2.1.21")
+    implementation("org.tinylog:tinylog-impl:2.4.1")
+    implementation("org.tinylog:tinylog-api-kotlin:2.4.1")
+    implementation("org.tinylog:slf4j-tinylog:2.4.1")
 
     // Serialization Frameworks
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.3.2")
-    implementation("com.charleskorn.kaml:kaml:0.40.0")
-    implementation("com.google.code.gson:gson:2.8.9")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.3.3")
+    implementation("com.charleskorn.kaml:kaml:0.45.0")
+    implementation("com.google.code.gson:gson:2.9.0")
 
     // Config Parsing Frameworks
     implementation("com.sksamuel.hoplite:hoplite:1.0.3")
-    implementation("com.sksamuel.hoplite:hoplite-toml:1.4.16")
+    implementation("com.sksamuel.hoplite:hoplite-toml:2.1.5")
 
     // CLI Argument Parsing Frameworks
     implementation("org.jetbrains.kotlinx:kotlinx-cli:0.3.4")
