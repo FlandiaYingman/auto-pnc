@@ -113,13 +113,13 @@ class FactoryModule(auto: AutoPnc) : PncModule(auto) {
         submitTask(Room.采掘矿场, (2..4) + (6..7))
 
         // 物资车间只自动生产基础检索指令。算法相关的道具不消耗太多时间，可以手动生产并加速。
-        submitTask(Room.物资车间, listOf(2))
+        submitTask(Room.物资车间, listOf(2, 9))
 
         // 礼品工房生产橙色礼物，由于橙色礼物效率最高，且生产蓝色礼物会消耗本应留给技能枢核的低模数据。
         submitTask(Room.礼品工房, 16..23)
 
         // 只生产技能枢核
-        submitTask(Room.数据封装中心, listOf(5)) //75% 技能枢核、25% 技能素材箱
+        submitTask(Room.数据封装中心, listOf(5, 6, 6)) //33% 技能枢核、66% 技能素材箱
     }
 
     private fun exitFactory() {
