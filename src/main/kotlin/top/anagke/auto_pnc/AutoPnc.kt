@@ -21,7 +21,6 @@ class TmplDelegate(private val diff: Double, private val type: TmplType) {
             val name = property.name
             val kClass = thisRef?.let { it::class.java } ?: AutoPnc::class.java
             tmpl = findSingle(name, kClass) ?: findMultiple(name, kClass)
-                    ?: throw Exception("cannot find template with given name '$name'")
         }
         return tmpl!!
     }
@@ -33,7 +32,7 @@ class TmplDelegate(private val diff: Double, private val type: TmplType) {
             ?.let { Tmpl(name, diff, listOf(Img.decode(it)!!), type) }
     }
 
-    private fun findMultiple(name: String, kClass: Class<*>): Tmpl? {
+    private fun findMultiple(name: String, kClass: Class<*>): Tmpl {
         val imgs = mutableListOf<Img>()
         var i = 0
         while (true) {
@@ -108,11 +107,11 @@ class AutoPnc(
         ExploreModule(this),
     )
     override val finalModules = listOf(
-        createModule("清理模块") { device.stop(PNC_ACTIVITY, description = "停止云图计划") },
+        createModule("清理模块") { device.stop(PNC_ACTIVITY, desc = "停止云图计划") },
     )
 
-    override fun isAtMain() = device.match(主界面)
+    override fun isInterfaceAtMain() = device.match(主界面)
 
-    override fun returnToMain() = device.jumpOut()
+    override fun setInterfaceToMain() = device.jumpOut()
 
 }

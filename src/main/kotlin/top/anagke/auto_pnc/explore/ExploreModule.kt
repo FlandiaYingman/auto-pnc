@@ -55,8 +55,8 @@ class ExploreModule(auto: AutoPnc) : PncModule(auto) {
     }
 
     fun repositionExplore() = device.apply {
-        swipev(640, 360, 1280 * 3, 720 * 3, 10.0, description = "拖至左上角").nap()
-        drag(640, 720, 16, 16, description = "拖到默认位置").nap()
+        swipev(640, 360, 1280 * 3, 720 * 3, 10.0, desc = "拖至左上角").nap()
+        drag(640, 720, 16, 16, desc = "拖到默认位置").nap()
     }
 
     fun farm碎片搜索() = device.apply {
@@ -88,6 +88,7 @@ class ExploreModule(auto: AutoPnc) : PncModule(auto) {
             算法采集区域2_未折叠 -> {
                 tap(165, 470).nap()
             }
+
             算法采集区域2_已折叠 -> {
                 tap(175, 235).nap()
             }
@@ -124,7 +125,7 @@ class ExploreModule(auto: AutoPnc) : PncModule(auto) {
 
     fun farm漏洞排查() = device.apply {
         repositionExplore()
-        tapd(142, 353, description = "点击漏洞排查").sleep()
+        tapd(142, 353, desc = "点击漏洞排查").sleep()
         Vulnerability.apply {
             run(config.exploreConfig.vulnerabilityLevel, config.exploreConfig.vulnerabilityPlan)
         }
@@ -138,31 +139,31 @@ class ExploreModule(auto: AutoPnc) : PncModule(auto) {
 
     fun farmActivity(levelPos: Pos = Pos(640, 360), useItem: Boolean) = device.apply {
         whileNotMatch(准备作战) {
-            tap(levelPos, description = "点击副本").nap()
+            tap(levelPos, desc = "点击副本").nap()
         }
 
-        tap(1127, 636, description = "准备作战")
+        tap(1127, 636, desc = "准备作战")
         await(作战开始)
 
-        tap(1127, 636, description = "作战开始")
+        tap(1127, 636, desc = "作战开始")
         farmAI()
 
     }
 
     fun farmAI(levelPos: Pos = Pos(640, 360)) = device.apply {
         whileNotMatch(canAI) {
-            tap(200, 550, description = "开启计划模式").nap() //开启计划模式
+            tap(200, 550, desc = "开启计划模式").nap() //开启计划模式
         }
 
-        tap(326, 547, description = "执行计划")
+        tap(326, 547, desc = "执行计划")
         await(动态结算界面, 作战成功, timeout = 5.minutes)
 
         if (matched(动态结算界面)) {
-            tap(897, 627, description = "领取").sleep()
+            tap(897, 627, desc = "领取").sleep()
             await(作战成功, timeout = 5.minutes)
         }
 
-        tap(1052, 623, description = "返回")
+        tap(1052, 623, desc = "返回")
         sleep()
     }
 
